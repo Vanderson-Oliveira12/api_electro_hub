@@ -6,7 +6,12 @@ class UserController {
   async findAll(req: Request, res: Response) {
     const listData = await UserModel.find();
 
-    res.status(200).json(listData);
+    try {
+      res.status(200).json(listData);
+    } catch (err) {
+      console.log(err);
+      res.status(500).send({ message: "internal server error" });
+    }
   }
 
   async signIn(req: Request, res: Response) {
@@ -72,9 +77,14 @@ class UserController {
         sex,
       };
 
-      console.log(userData)
+      let userPathSex =
+        userData.sex == 1
+          ? "https://raw.githubusercontent.com/Vanderson-Oliveira12/api_electro_hub/master/src/upload/user_male.jpg"
+          : "https://raw.githubusercontent.com/Vanderson-Oliveira12/api_electro_hub/master/src/upload/user_female.jpg";
 
-      await UserModel.create(userData);
+      console.log(userData);
+
+      await UserModel.create({ ...userData, user_image_path: userPathSex });
       res.status(201).send({ message: "Usuário criado com sucesso!" });
       return;
     } catch (err) {
