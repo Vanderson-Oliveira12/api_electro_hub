@@ -10,7 +10,7 @@ class UserController {
       res.status(200).json(listData);
     } catch (err) {
       console.log(err);
-      res.status(500).send({ message: "internal server error" });
+      res.status(500).json({ message: "internal server error" });
     }
   }
 
@@ -26,9 +26,9 @@ class UserController {
       if (!email || !password)
         return res
           .status(400)
-          .send({ message: "Preencha com um email e senha!" });
+          .json({ message: "Preencha com um email e senha!" });
       if (!userExists)
-        return res.status(404).send({ message: "Email ou senha incorreto!" });
+        return res.status(404).json({ message: "Email ou senha incorreto!" });
 
       const payload = {
         id: userExists.id,
@@ -41,10 +41,10 @@ class UserController {
       });
 
       res.header("Authorization", accessToken);
-      res.send({ "access-token": accessToken });
+      res.json({ "access-token": accessToken });
     } catch (err) {
       console.log(err);
-      res.status(500).send({ message: "Internal server error!" });
+      res.status(500).json({ message: "Internal server error!" });
     }
   }
 
@@ -55,19 +55,19 @@ class UserController {
 
     try {
       if (!name || !email || !password || !age || !sex)
-        return res.status(400).send({ message: "Parametros inválidos!" });
+        return res.status(400).json({ message: "Parametros inválidos!" });
       if (name.length < 4)
         return res
           .status(400)
-          .send({ message: "O nome precisa ter mais de 4 caracteres!" });
+          .json({ message: "O nome precisa ter mais de 4 caracteres!" });
       if (password.length < 4)
         return res
           .status(400)
-          .send({ message: "A senha precisa ter mais de 4 caracteres!" });
+          .json({ message: "A senha precisa ter mais de 4 caracteres!" });
       if (emailIsAlready)
         return res
           .status(400)
-          .send({ message: "Usuário com este e-mail já cadastro" });
+          .json({ message: "Usuário com este e-mail já cadastro" });
 
       const userData = {
         name,
@@ -77,19 +77,18 @@ class UserController {
         sex,
       };
 
+      /* 1 - male | 2 - female */
       let userPathSex =
         userData.sex == 1
           ? "https://raw.githubusercontent.com/Vanderson-Oliveira12/api_electro_hub/master/src/upload/user_male.jpg"
           : "https://raw.githubusercontent.com/Vanderson-Oliveira12/api_electro_hub/master/src/upload/user_female.jpg";
 
-      console.log(userData);
-
       await UserModel.create({ ...userData, user_image_path: userPathSex });
-      res.status(201).send({ message: "Usuário criado com sucesso!" });
+      res.status(201).json({ message: "Usuário criado com sucesso!" });
       return;
     } catch (err) {
       console.log(err);
-      res.status(500).send({ message: "internal server error!" });
+      res.status(500).json({ message: "internal server error!" });
     }
   }
 }
